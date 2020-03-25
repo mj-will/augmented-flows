@@ -23,6 +23,10 @@ class Transform(nn.Module):
         self.linear2 = nn.Linear(n_neurons, n_neurons)
         self.linear3 = nn.Linear(n_neurons, 2 * out_dim)
 
+        with torch.no_grad():
+            self.linear3.weight.data.fill_(0.)
+            self.linear3.bias.data.fill_(0.)
+
     def forward(self, x):
         """
         Forward pass
