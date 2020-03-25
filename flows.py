@@ -56,11 +56,6 @@ class AugmentedBlock(nn.Module):
         self.encoder = Transform(x_dim, e_dim, n_neurons)
         self.decoder = Transform(e_dim, x_dim, n_neurons)
 
-        def init(m):
-          if isinstance(m, nn.Linear):
-            m.bias.data.fill_(0)
-            nn.init.orthogonal_(m.weight.data)
-
     def forward(self, feature, augment, mode='forward'):
         """
         Forward or backwards pass
@@ -140,7 +135,7 @@ class AugmentedSequential(nn.Sequential):
             e = torch.Tensor(K, e_dim).normal_().to(feature.device)
             log_q = self.log_N(e)
             # need to pass the same feature K times (for each e)
-            f_repeated = f * torch.ones(K, f.size(0))
+            f_repeated = f * torch.ones(K, f.size(0), device=feature.device)
             log_p_xe = self.log_p_xe(f_repeated, e)
             # compute sum of ratio
             lpx = -np.log(K) + torch.logsumexp(log_p_xe - log_q, (0))
